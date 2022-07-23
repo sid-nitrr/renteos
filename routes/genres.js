@@ -1,79 +1,82 @@
+const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
 const Joi = require('joi'); // J caps in Joi bcs it contains class.
 
-const genres= [
-    {genre:'Horror'},
-    {genre:'Action'},
-    {genre:'Drama'},
-
-];
-
-router.get('/', (req, res) => {
+const Genre = mongoose.model('Genre', new mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        minlength: 5,
+        maxlength: 50
+    }
+}));
+router.get('/', async (req, res) => {
+    const genres = await Genre.find();
     res.send(genres);
 });
-router.get('/:genre', (req, res) => {
-    const genre = genres.find(c => c.genre === req.params.genre);
-    if (!genre) res.status(404).send(`No Movie found with genre ${req.params.genre}`);
-    res.send(genre);
-});
 
-router.post('/', (req, res) => {
-    const { error, value } = validateGenre(req.body);
+router.post('/', async (req, res) => {
+    const { error } = validateGenre(req.body);
     if (error) {
         return res.status(400).send(error.details[0].message);
     }
-    const gen = genres.find(c => c.genre === req.body.genre);
-    console.log("body ", req.body.genre);
-    console.log("param.genre ", req.params.genre)
-    if (gen) {
-        return res.status(500).send(`Movie already exist with genre ${req.params.genre}`);
-        
+    //Check if movie genre which is to be added does already exixt or not.
+    let genre = await Genre
+                         .find({name: req.body.name});
+    if (genre.length>0) {
+        return res.status(500).send(`Movie already exist with genre ${req.body.name}`);
     };
-    // console.log("error  = ",error);
-    // console.log("value = ", value);
-    // console.log("req.body  = ",req.body);
-    const genre = {
-        genre: req.body.genre
-    };
-    genres.push(genre);
+    genre = new Genre({
+        name: req.body.name
+    })
+    genre = await genre.save();
     res.send(genre);
 });
 
-router.put('/:genre', (req, res) => {
-    //1. Check that genre exist or not, if not existing return 404
-    const genr = genres.find(c => c.genre === req.params.genre);
-    if (!genr) {
-        return res.status(404).send(`No Movie found with genre ${req.params.genre}`);
+router.put('/:id', async (req, res) => {
+    //1. Check that id exist or not, if not existing return 404
+    let genre = await Genre.findById(req.params.id);
+                         
+    if (!genre) {
+        return res.status(404).send(`No Movie found with id ${req.params.id}`);
     }
     //2. Check is req having correct schema, if invalid return 400-bad request
-    const { error, value } = validateGenre(req.body);
+    const { error } = validateGenre(req.body);
     if (error) {
         return res.status(400).send(error.details[0].message);
     }
     //3. Modify the db and return the updated course
-    genr.genre = req.body.genre;
-    res.send(genr);
+    genre = await Genre.findByIdAndUpdate(req.params.id, {
+        name: req.body.name
+    }, {new: true});
+    res.send(genre);
 });
 
-router.delete('/:genre', (req, res) => {
-    //Look for course exist or not, if not return 404.
-    const genr = genres.find(c => c.genre === req.params.genre);
-    if (!genr) {
-        return res.status(404).send(`No Movie found with id ${req.params.genre}`);
+router.delete('/:id', async (req, res) => {
+    //Look for id exist or not, if not return 404.
+    let genre = await Genre.findById(req.params.id);
+    if (!genre) {
+        return res.status(404).send(`No Genre found with id ${req.params.id}`);
     }
     //Delete if present
-    genres.splice(genres.indexOf(genr), 1);
+    genre = await Genre.findByIdAndRemove(req.params.id);
     //Return the deleted course
-    res.status(200).send(`${genr.genre} Genre deleted succesfully`);
+    res.status(200).send(`${genre.name} Genre deleted succesfully`);
+});
+
+router.get('/:id', async (req, res) => {
+    const genre = await Genre.findById(req.params.id);
+    if (!genre) res.status(404).send(`No Genre found with id ${req.params.id}`);
+    res.send(genre);
 });
 
 function validateGenre(genre) {
     const schema = Joi.object({
-        genre: Joi.string().required()
+        name: Joi.string().min(3).required()
     });
     const { error, value } = schema.validate(genre);
     return { error, value };
 
 }
-module.exports=router;
+module.exports = router;
