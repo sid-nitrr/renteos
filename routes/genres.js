@@ -1,23 +1,14 @@
-const mongoose = require('mongoose');
+const {Genre, validate } = require('../models/genre');
 const express = require('express');
 const router = express.Router();
-const Joi = require('joi'); // J caps in Joi bcs it contains class.
 
-const Genre = mongoose.model('Genre', new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        minlength: 5,
-        maxlength: 50
-    }
-}));
 router.get('/', async (req, res) => {
     const genres = await Genre.find();
     res.send(genres);
 });
 
 router.post('/', async (req, res) => {
-    const { error } = validateGenre(req.body);
+    const { error } = validate(req.body);
     if (error) {
         return res.status(400).send(error.details[0].message);
     }
@@ -42,7 +33,7 @@ router.put('/:id', async (req, res) => {
         return res.status(404).send(`No Movie found with id ${req.params.id}`);
     }
     //2. Check is req having correct schema, if invalid return 400-bad request
-    const { error } = validateGenre(req.body);
+    const { error } = validate(req.body);
     if (error) {
         return res.status(400).send(error.details[0].message);
     }
@@ -71,12 +62,4 @@ router.get('/:id', async (req, res) => {
     res.send(genre);
 });
 
-function validateGenre(genre) {
-    const schema = Joi.object({
-        name: Joi.string().min(3).required()
-    });
-    const { error, value } = schema.validate(genre);
-    return { error, value };
-
-}
 module.exports = router;

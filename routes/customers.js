@@ -1,23 +1,6 @@
-const mongoose = require('mongoose');
 const express = require('express');
 const router = express.Router();
-const Joi = require('joi'); // J caps in Joi bcs it contains class.
-
-const Customer = mongoose.model('Customer', new mongoose.Schema({
-    name: {
-        type: String,
-        required: true,
-        minlength: 5,
-        maxlength: 50
-    },
-    phone: {
-        type: String,
-        required: true,
-        minlength: 5,
-        maxlength: 50
-    },
-    isGold: {type: Boolean, default: false}
-}));
+const { Customer, validate } = require('../models/customer');
 
 router.get('/', async (req, res) => {
     const customers = await Customer.find();
@@ -25,7 +8,7 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const { error } = validateCustomer(req.body);
+    const { error } = validate(req.body);
     if (error) {
         return res.status(400).send(error.details[0].message);
     }
@@ -56,7 +39,7 @@ router.put('/:id', async (req, res) => {
         return res.status(404).send(`No customer found with id ${req.params.id}`);
     }
     //2. Check is req having correct schema, if invalid return 400-bad request
-    const { error } = validateCustomer(req.body);
+    const { error } = validate(req.body);
     if (error) {
         return res.status(400).send(error.details[0].message);
     }
@@ -86,14 +69,5 @@ router.get('/:id', async (req, res) => {
     if (!customer) res.status(404).send(`No Customer found with id ${req.params.id}`);
     res.send(customer);
 });
-function validateCustomer(customer) {
-    const schema = Joi.object({
-        name: Joi.string().min(5).required(),
-        phone: Joi.string().min(5).required(),
-        isGold: Joi.boolean()
-    });
-    const { error, value } = schema.validate(customer);
-    return { error, value };
 
-}
 module.exports = router;
