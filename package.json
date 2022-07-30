@@ -1,7 +1,7 @@
 {
   "name": "renteos",
   "version": "1.0.0",
-  "description": "",
+  "description": "Renteos is a RESTful API for a video rental services",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
