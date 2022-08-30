@@ -1,4 +1,5 @@
 const auth = require('../middleware/auth');
+const admin = require('../middleware/admin');
 const express = require('express');
 const router = express.Router();
 const { Customer, validate } = require('../models/customer');
@@ -53,7 +54,7 @@ router.put('/:id', auth,  async (req, res) => {
     res.send(customer);
 });
 
-router.delete('/:id', auth,  async (req, res) => {
+router.delete('/:id', [auth, admin], async (req, res) => {
     //Look for id exist or not, if not return 404.
     let customer = await Customer.findById(req.params.id);
     if (!customer) {
