@@ -19,7 +19,11 @@ winston.add(winston.transports.File, {filename: 'logfile.log'});
 winston.add(winston.transports.MongoDB, {
     db: 'mongodb://localhost/renteos',
     level:'error'});
-    
+
+process.on('uncaughtException', (ex) => {
+    console.log('Uncaught exception found');
+    winston.error(ex.message, ex);
+})
 if(!config.get('jsonPrivateKey')){
     console.error('FATAL ERROR: jwt Private key not defined');
     process.exit(1);
