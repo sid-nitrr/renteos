@@ -20,10 +20,22 @@ winston.add(winston.transports.MongoDB, {
     db: 'mongodb://localhost/renteos',
     level:'error'});
 
-process.on('uncaughtException', (ex) => {
-    console.log('Uncaught exception found');
+// process.on('uncaughtException', (ex) => {
+//     //console.log('Uncaught exception found');
+//     winston.error(ex.message, ex);
+//     process.exit(1);
+// })
+winston.handleExceptions(
+    new winston.transports.File({filename: 'uncaughtExceptions.log'})
+);
+
+process.on('unhandledRejection', (ex) => {
+    //console.log('Uncaught rejection found');
     winston.error(ex.message, ex);
+    process.exit(1);
 })
+const p = Promise.reject(new Error('Something failed in promise'));
+p.then(() => console.log('Done failure'));
 if(!config.get('jsonPrivateKey')){
     console.error('FATAL ERROR: jwt Private key not defined');
     process.exit(1);
