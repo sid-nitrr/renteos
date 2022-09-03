@@ -1,0 +1,19 @@
+require('express-async-errors');
+const winston = require('winston');
+require('winston-mongodb');
+module.exports = function(){
+    winston.add(winston.transports.File, { filename: 'logfile.log' });
+    winston.add(winston.transports.MongoDB, {
+        db: 'mongodb://localhost/renteos',
+        level: 'error'
+    });
+
+    winston.handleExceptions(
+        new winston.transports.File({ filename: 'uncaughtExceptions.log' })
+    );
+
+    process.on('unhandledRejection', (ex) => {
+        //console.log('Uncaught rejection found');
+        throw ex;
+    })
+}
