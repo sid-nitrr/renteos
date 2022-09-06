@@ -4,7 +4,7 @@
   "description": "Renteos is a RESTful API for a video rental services",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --watchAll"
   },
   "keywords": [],
   "author": "Siddhant",
@@ -22,5 +22,8 @@
     "mongoose": "^6.4.6",
     "winston": "^2.0.0",
     "winston-mongodb": "^3.0.0"
+  },
+  "devDependencies": {
+    "jest": "^29.0.2"
   }
 }
