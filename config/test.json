@@ -1,3 +1,4 @@
 {
-    "jsonPrivateKey" : "1234" 
+    "jsonPrivateKey" : "1234",
+    "db": "mongodb://localhost/renteos_tests"
 }

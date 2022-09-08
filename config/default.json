@@ -1,3 +1,4 @@
 {
-    "jsonPrivateKey" : "mySecureKey" 
+    "jsonPrivateKey" : "mySecureKey",
+    "db": "mongodb://localhost/renteos"
 }
