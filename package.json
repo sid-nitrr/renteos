@@ -4,7 +4,7 @@
   "description": "Renteos is a RESTful API for a video rental services",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll --verbose"
+    "test": "jest --watchAll --verbose --coverage"
   },
   "keywords": [],
   "author": "Siddhant",
