@@ -1,12 +1,13 @@
 const request = require('supertest');
 const {Genre} = require('../../models/genre');
 const {User} = require('../../models/user');
-let server;
+
 
   describe('/api/genres', () => {
+    let server;
     beforeEach( () => {server = require('../../index');})
     afterEach(async () => {
-      server.close(); 
+      await server.close(); 
       await Genre.deleteMany({});
     }); 
     describe('GET/', () => {

@@ -7,7 +7,7 @@ describe('auth middleware', () => {
         token = new User().generateAuthToken();
     })
     afterEach(async () => {
-      server.close(); }); 
+      await server.close(); }); 
 
     const exec = () => {
       return request(server)

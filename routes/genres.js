@@ -8,7 +8,7 @@ const router = express.Router();
 
 router.get('/', async (req, res) => {
     const genres = await Genre.find();
-    res.send(genres);
+    return res.send(genres);
 });
 
 router.post('/', auth, async (req, res) => {
