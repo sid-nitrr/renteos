@@ -1,4 +1,4 @@
 {
     "jsonPrivateKey" : "mySecureKey",
-    "db": "mongodb://localhost/renteos"
+    "db": "mongodb+srv://sid-nitrr:Coco0607@cluster0.y28ajoj.mongodb.net/test"
 }
